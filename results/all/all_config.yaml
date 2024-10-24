@@ -1,0 +1,129 @@
+# Configuration for Synthetic Data Generation and Comparison
+
+# Datasets to be compared
+datasets:
+  - name: MotionSense
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None
+
+  - name: KuHar
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_thigh
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_upperarm
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_waist
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: UCI
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: WISDM
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+transformations:
+    - name: None
+    - name: fft
+
+# Generative models
+generative_models:
+
+  - name: diffusion_unet1d
+    model: Diffusion
+    parameters:
+      in_channel: 6
+      out_channel: 6
+    n_gen_samples: 3000
+    epochs: 500
+    folder_save_generate_df: data/synthetic/all
+
+  
+  - name: timeganpt
+    method: TIMEGANPT
+    framework: None
+    description: "https://github.com/jsyoon0823/TimeGAN/blob/master/tutorial_timegan.ipynb"
+    parameters:
+          module: gru
+          hidden_dim: 6
+          num_layer: 3
+          iterations: 500
+          batch_size: 128
+    n_gen_samples: 500
+    folder_save_generate_df: data/synthetic/all
+
+  - name: Doppelgangerger    
+    model: GAN
+    paper: DoppelGANger
+    speciality: general TS
+    time: 2020
+    framework: None
+    description: 
+    source code: https://github.com/fjxmlzn/DoppelGANger
+    parameters:
+        max_sequence_len: 360
+        sample_len: 3
+        batch_size: 32
+        epochs: 500 ### mudar
+    n_gen_samples: 3000
+  # Logging and results
+    logging:
+      log_level: INFO
+      save_models: true
+    folder_save_generate_df: data/synthetic/all
+
+
+# Evaluations for comparing real and synthetic data
+evaluations:
+  dataset_eval:
+      original: true
+      synthetic: true
+      reports:
+        #  save_html_report: true
+          save_pdf_reports: true
+       #   save_csv_metrics: true
+  gen_vs_orig_eval:
+      visualizations: true
+      ml: true
+      reports:
+          save_html_report: true
+          save_pdf_reports: true
+          save_csv_metrics: true
+  folder_reports: tests/all
